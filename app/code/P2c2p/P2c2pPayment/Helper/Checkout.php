@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * Checkout helper help to give the current selected cart item detail.
  */

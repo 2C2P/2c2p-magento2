@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * PaymentModeType is give the model for dropdown page in admin configuration setting page.
  */

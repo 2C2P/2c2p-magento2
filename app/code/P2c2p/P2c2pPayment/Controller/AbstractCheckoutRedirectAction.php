@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * AbstractCheckoutRedirectAction is used for intermediate for request and reponse.
  */

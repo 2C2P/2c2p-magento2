@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * P2c2pHash helper class is help to Validate the hash value and also check the hash value is valid or not for response.
  */

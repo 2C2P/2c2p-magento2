@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * Payment Success Controller action method is used to display the payment success response into Magento frontend.
  */

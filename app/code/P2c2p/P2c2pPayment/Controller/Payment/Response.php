@@ -1,6 +1,6 @@
 <?php
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * This Response action method is responsible for handle the 2c2p payment gateway response.
  */
@@ -22,12 +22,6 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 		$objCustomerData = $this->getCustomerSession();
 		$isValidHash  = $hashHelper->isValidHashValue($_REQUEST,$configHelper['secretKey']);
 
-		//Check whether hash value is valid or not If not valid then redirect to home page when hash value is wrong.
-		if(!$isValidHash) {
-			$this->_redirect('');
-			return;
-		}
-
 		//Get Payment getway response to variable.
 		$payment_status_code = $_REQUEST['payment_status'];
 		$transaction_ref 	 = $_REQUEST['transaction_ref']; 
@@ -36,7 +30,23 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 		$order_id 		 	 = $_REQUEST['order_id'];
 
 		//Get the object of current order.
-		$order = $this->getOrder()->load($order_id);
+		$order = $this->getOrderDetailByOrderId($order_id);
+
+		//If order is empty then redirect to home page. Because order is not avaialbe.
+		if(empty($order)) {
+			$this->_redirect('');
+			return;
+		}
+
+		//Check whether hash value is valid or not If not valid then redirect to home page when hash value is wrong.
+		if(!$isValidHash) {
+			$order->setState(\Magento\Sales\Model\Order::STATUS_FRAUD);
+			$order->setStatus(\Magento\Sales\Model\Order::STATUS_FRAUD);
+			$order->save();
+			
+			$this->_redirect('');
+			return;
+		}
 
 		$metaDataHelper = $this->getMetaDataHelper();		
 		$metaDataHelper->savePaymentGetawayResponse($_REQUEST,$order->getCustomerId());

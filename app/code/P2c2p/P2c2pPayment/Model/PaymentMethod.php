@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * PaymentMethod is base class / entry point for 2c2p plugin.
  */

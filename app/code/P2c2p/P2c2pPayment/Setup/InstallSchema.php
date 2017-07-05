@@ -1,7 +1,7 @@
 <?php
  
  /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 28 June 2017
  * Create P2c2p require table in database when plugin/module is installed in Magento-2
  */
@@ -241,6 +241,8 @@ class InstallSchema implements InstallSchemaInterface
             $installer->getIdxName('p2c2p_meta', ['p2c2p_id']),
             ['p2c2p_id']
         );
+
+        $installer->getConnection()->createTable($table);
 
 		$installer->endSetup();
 	}

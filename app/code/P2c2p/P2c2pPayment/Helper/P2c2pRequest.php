@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * P2c2pRequest helper class is used to generate the current user request and send it to 2c2p payment getaway.
  */

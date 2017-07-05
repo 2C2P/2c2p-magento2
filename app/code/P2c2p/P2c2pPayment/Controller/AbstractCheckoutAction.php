@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * AbstractCheckoutAction is used for intermediate for request and reponse.
  */
@@ -38,12 +38,7 @@ abstract class AbstractCheckoutAction extends AbstractAction
     }
 
     // Get Magento Order object.
-    protected function getOrder() {
-        $orderId = $this->getCheckoutSession()->getLastRealOrderId();
-
-        if (!isset($orderId)) {
-            return null;
-        }
+    protected function getOrderDetailByOrderId($orderId) {
 
         $order = $this->getOrderFactory()->create()->loadByIncrementId($orderId);
 

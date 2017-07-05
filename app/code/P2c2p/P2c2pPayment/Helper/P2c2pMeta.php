@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * P2c2pMeta helper class is used to store data into table. i.e created by P2c2p plugin.
  */

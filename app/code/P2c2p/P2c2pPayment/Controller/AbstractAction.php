@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * AbstractAction class is base class for P2c2p payment getaway.
  */

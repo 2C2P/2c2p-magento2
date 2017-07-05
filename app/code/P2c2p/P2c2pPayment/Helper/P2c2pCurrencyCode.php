@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 19 June 2017
  * P2c2pCurrencyCode helper class is give the 2C2P payment gateway suppored currency code.
  */

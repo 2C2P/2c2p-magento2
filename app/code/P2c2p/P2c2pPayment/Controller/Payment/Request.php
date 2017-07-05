@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Created by Aloha
+ * Created by 2C2P
  * Date 20 June 2017
  * Payment Request Controller is responsible for send request to 2c2p payment getaway.
  */
@@ -13,7 +13,13 @@ class Request extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAct
 	public function execute() {
 
 		//Get current order detail from OrderFactory object.
-		$order = $this->getOrder();
+		$orderId = $this->getCheckoutSession()->getLastRealOrderId();
+
+		if(empty($orderId)) {
+			die("Aunthentication Error: Order is is empty.");
+		}
+
+		$order = $this->getOrderDetailByOrderId($orderId);
 
 		//Redirect to home page with error
 		if(!isset($order)) {
@@ -31,8 +37,7 @@ class Request extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAct
 		}
 		
 		
-		$customerSession = $this->getCustomerSession();
-		
+		$customerSession = $this->getCustomerSession();		
 		//Get the selected product name from the OrderFactory object.
 
 		$item_count = count($order->getAllItems());
