@@ -37,7 +37,7 @@ class Request extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAct
 		}
 		
 		
-		$customerSession = $this->getCustomerSession();		
+		$customerSession = $this->getCustomerSession();
 		//Get the selected product name from the OrderFactory object.
 
 		$item_count = count($order->getAllItems());
@@ -57,7 +57,7 @@ class Request extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAct
 				
 
 		//Check whether customer is logged in or not into current merchant website.
-		if($customerSession->isLoggedIn()) {			
+		if($customerSession->isLoggedIn()) {
 			$cust_email = $customerSession->getCustomer()->getEmail();
 		} else {
 			$billingAddress = $order->getBillingAddress();

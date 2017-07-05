@@ -28,7 +28,7 @@ class Form extends \Magento\Framework\View\Element\Template
 		$this->storeManagerInterface = $storeManagerInterface;
 	}
 
-	public function getThankYouMessage() {		
+	public function getResponseParams() {
 		return $this->getRequest()->getParams();
 	}
 
@@ -37,7 +37,7 @@ class Form extends \Magento\Framework\View\Element\Template
 	}
 
 	public function getCustomerDetail() {
-		return $this->objCustomerSession;			
+		return $this->objCustomerSession;
 	}
 
 	public function getBaseCurrencyCode() {

@@ -7,11 +7,11 @@
                 <field id="active" translate="label comment" sortOrder="1" type="select" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <validate>required-entry</validate>
+                    <validate>p2c2p-enable-plugin</validate>
                 </field>
                 <field id="title" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Title</label>
-                    <validate>required-entry</validate>
+                    <validate>p2c2p-required-entry</validate>
                 </field>
                 <field id="mode" translate="label" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mode</label>
@@ -19,19 +19,19 @@
                 </field>
                 <field id="merchantId" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Merchant Id</label>
-                    <validate>required-entry</validate>
+                    <validate>p2c2p-required-entry</validate>
                 </field>
                 <field id="secretKey" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Secret Key</label>
-                    <validate>required-entry</validate>
+                    <validate>p2c2p-required-entry</validate>
                 </field>
                 <field id="storedCard" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Stored Card</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>                    
                 </field>
                 <field id="paymentExpiry" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>123 Payment Expiry (hours)</label>
-                    <validate>required-entry validate-digits validate-digits-range digits-range-1-10</validate>
+                    <label>123 Payment Expiry (hours)</label>                    
+                    <validate>p2c2p-required-entry p2c2p-validate-digits p2c2p-expiry digits-range-8-720</validate>
                 </field>
             </group>
         </section>

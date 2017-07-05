@@ -22,7 +22,7 @@ class P2c2pMeta
 
 	//Save the Payment getaway response into p2c2p_meta table using the current payment order_id.
 	public function savePaymentGetawayResponse($request,$user_id) {
-
+		
 		$model = $this->objMetaFactory->create();	
 
 		$model->setData('p2c2p_id' , $request['order_id']);

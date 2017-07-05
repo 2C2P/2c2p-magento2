@@ -94,7 +94,7 @@ class P2c2pRequest extends AbstractHelper{
 		$strHtml .= '</form>';
 		$strHtml .= '<script type="text/javascript">';
 		$strHtml .= 'document.p2c2pform.submit()';
-		$strHtml .= '</script>';
+		$strHtml .= '</script>';			
 		return $strHtml;
 	}
 

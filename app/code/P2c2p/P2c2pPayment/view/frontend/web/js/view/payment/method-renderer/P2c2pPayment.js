@@ -44,7 +44,6 @@ define(
                 error: function (response) {
                     self.specializationArray(response);
                 }
-
             });
         }
 
@@ -99,6 +98,7 @@ define(
                             alert("Unable to remove your card. Please try again, and let us know if the problem persists.")
                         }
                         else{
+                            $(btnTokenId).hide();
                             alert("Your card has been removed successfully.");  
                         }
                     },
