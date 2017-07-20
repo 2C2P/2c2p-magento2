@@ -12,7 +12,7 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 	public function execute()
 	{		
 		//If payment getway response is empty then redirect to home page directory.		
-		if(empty($_REQUEST)){
+		if(empty($_REQUEST) || empty($_REQUEST['order_id'])){
 			$this->_redirect('');
 			return;
 		}
@@ -28,7 +28,7 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 		$approval_code   	 = $_REQUEST['approval_code'];
 		$payment_status  	 = $_REQUEST['payment_status'];
 		$order_id 		 	 = $_REQUEST['order_id'];
-
+		
 		//Get the object of current order.
 		$order = $this->getOrderDetailByOrderId($order_id);
 
@@ -55,8 +55,8 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 		if(strcasecmp($payment_status_code, "000") == 0) {			
 			//IF payment status code is success
 
-			if($objCustomerData->isLoggedIn() && !empty($_REQUEST['stored_card_unique_id'])) {
-				$intCustomerId = $objCustomerData->getCustomerId();
+			if(!empty($order->getCustomerId()) && !empty($_REQUEST['stored_card_unique_id'])) {
+				$intCustomerId = $order->getCustomerId();
 				$boolIsFound = false;
 
 				// Fetch data from database by using the customer ID.
