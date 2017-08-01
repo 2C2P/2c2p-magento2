@@ -16,6 +16,8 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_canUseCheckout = true;
     protected $_canUseForMultishipping = false;
 
+    //protected $_formBlockType = 'P2c2p\P2c2pPayment\Block\Form';
+
     //Set additional data and session object and use it further process.
 	public function assignData(\Magento\Framework\DataObject $data)
 	{    	
@@ -31,5 +33,17 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 		}
 
         return $this;
+    }
+
+    /**
+     * Instantiate state and set it to state object
+     * @param string $paymentAction
+     * @param Varien_Object
+     */
+    public function initialize($paymentAction, $stateObject)
+    {        
+        $stateObject->setState("Pending_2C2P");
+        $stateObject->setStatus("Pending_2C2P");
+        $stateObject->setIsNotified(false); 
     }
 }

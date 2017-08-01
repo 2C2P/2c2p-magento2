@@ -24,6 +24,38 @@ class InstallSchema implements InstallSchemaInterface
          */
 		$installer->startSetup();
 
+        try {
+          // Required tables
+          $statusTable = $installer->getTable('sales_order_status');
+          $statusStateTable = $installer->getTable('sales_order_status_state');
+
+          // Insert statuses
+          $installer->getConnection()->insertArray(
+            $statusTable,
+            array('status','label'),
+            array(array('status' => 'Pending_2C2P', 'label' => 'Pending 2C2P'))
+            );
+
+          // Insert states and mapping of statuses to states
+          $installer->getConnection()->insertArray(
+            $statusStateTable,
+            array(
+              'status',
+              'state',
+              'is_default',
+              'visible_on_front'
+              ),
+            array(
+              array(
+                'status' => 'Pending_2C2P',
+                'state' => 'Pending_2C2P',
+                'is_default' => 0,
+                'visible_on_front' => 1
+                )
+              )
+            );
+      } catch (Exception $e) {}
+
 		/**
 		* Create p2c2p_token table
 		*/

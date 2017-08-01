@@ -85,8 +85,8 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 			}
 
 			//Set the complete status when payment is completed.
-			$order->setState(\Magento\Sales\Model\Order::STATE_COMPLETE);
-			$order->setStatus(\Magento\Sales\Model\Order::STATE_COMPLETE);
+			$order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
+			$order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
 			$order->save();				
 
 			$this->executeSuccessAction($_REQUEST);
@@ -94,8 +94,8 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 
 		} else if(strcasecmp($payment_status_code, "001") == 0) {			
 			//Set the Pending payment status when payment is pending. like 123 payment type.
-			$order->setState(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-			$order->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+			$order->setState("Pending_2C2P");
+			$order->setStatus("Pending_2C2P");
 			$order->save();
 
 			$this->executeSuccessAction($_REQUEST);
@@ -103,10 +103,6 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 
 		} else {
 			//If payment status code is cancel/Error/other.
-			$order->setState(\Magento\Sales\Model\Order::STATE_CANCELED);
-			$order->setStatus(\Magento\Sales\Model\Order::STATE_CANCELED);
-			$order->save();
-
 			$this->executeCancelAction();
 			return;
 		}
