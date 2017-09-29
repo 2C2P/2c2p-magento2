@@ -33,6 +33,10 @@
                     <label>123 Payment Expiry (hours)</label>                    
                     <validate>p2c2p-required-entry p2c2p-validate-digits p2c2p-expiry digits-range-8-720</validate>
                 </field>
+                <field id="toc2p_lang" translate="label" type="select" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Select Language</label>
+                    <source_model>P2c2p\P2c2pPayment\Model\PaymentLangType</source_model>
+                </field>
             </group>
         </section>
     </system>

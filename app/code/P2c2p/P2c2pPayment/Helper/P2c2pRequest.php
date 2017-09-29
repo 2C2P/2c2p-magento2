@@ -131,6 +131,9 @@ class P2c2pRequest extends AbstractHelper{
 		
 		$merchant_id      	 = $this->objConfigSettings['merchantId'];		
 		$currency       	 = $this->getMerchantSelectedCurrencyCode();
+		$selected_lang       = $this->objConfigSettings['toc2p_lang'];;
+
+		$default_lang  = !empty($selected_lang) ? $selected_lang : 'en';
 
 		$this->arrayP2c2pFormFields["version"] 				= "7.0";
 		$this->arrayP2c2pFormFields["merchant_id"] 			= $merchant_id;
@@ -151,6 +154,7 @@ class P2c2pRequest extends AbstractHelper{
         $this->arrayP2c2pFormFields["result_url_1"]   		= $this->getMerchantReturnUrl();
         $this->arrayP2c2pFormFields["result_url_2"]   		= $this->getMerchantReturnUrl();
         $this->arrayP2c2pFormFields["payment_option"]   	= "A"; // Pass by default Payment option as A
+        $this->arrayP2c2pFormFields["default_lang"]   		= $default_lang; // Set selected language.
     }
 
     /*Get the selected currency code and converted this's selected currency to number instead of 3 character like 'SGD'. Because 2C2P is accept currency code in Digit only. */
