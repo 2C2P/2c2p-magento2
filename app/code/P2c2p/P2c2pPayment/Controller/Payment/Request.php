@@ -39,22 +39,15 @@ class Request extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAct
 		
 		$customerSession = $this->getCustomerSession();
 		//Get the selected product name from the OrderFactory object.
-
-		$item_count = count($order->getAllItems());
-        $current_count = 0;
+		
         $product_name = '';
-
         foreach($order->getAllItems() as $item) {
-
-            $product_name .= $item->getName();
-            $current_count++;
-
-            if($item_count !== $current_count)
-                $product_name .= ', ';
+            $product_name .= $item->getName() . ', ';
         }
 
+        $product_name = (strlen($product_name) > 0) ? substr($product_name, 0, strlen($product_name) - 2) : "";
         $product_name .= '.';
-				
+        $product_name = mb_strimwidth($product_name, 0, 255, '...');       
 
 		//Check whether customer is logged in or not into current merchant website.
 		if($customerSession->isLoggedIn()) {

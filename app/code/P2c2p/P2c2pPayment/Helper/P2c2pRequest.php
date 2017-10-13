@@ -25,7 +25,7 @@ class P2c2pRequest extends AbstractHelper{
 				StoreManagerInterface $storeManagerInterface, 
 				P2c2pCurrencyCode $p2c2pCurrencyCode) {
 
-		$this->objConfigSettings = $configSettings->getValue('payment/p2c2ppayment');
+		$this->objConfigSettings = $configSettings->getValue('payment/P2c2pPayment');
 		$this->objP2c2pHashHelper = $p2c2pHash;
 		$this->objStoreManagerInterface = $storeManagerInterface;
 		$this->objP2c2pCurrencyCodeHelper = $p2c2pCurrencyCode;
@@ -62,7 +62,6 @@ class P2c2pRequest extends AbstractHelper{
 
 	//This function is used to genereate the request for make payment to payment getaway.
 	public function p2c2p_construct_request($parameter,$isLoggedIn) {
-
 		if($isLoggedIn) {
 
 			//Check stored card is enble by Merchant or not.
@@ -77,7 +76,7 @@ class P2c2pRequest extends AbstractHelper{
 		}
 
 		$this->generateP2c2pCommonFormFields($parameter);
-		$this->setPaymentExpiryTime($parameter);
+		$this->setPaymentExpiryTime();
 
 		$hash_value = $this->objP2c2pHashHelper->createRequestHashValue($this->arrayP2c2pFormFields,$this->objConfigSettings['secretKey']);
 		$this->arrayP2c2pFormFields['hash_value']  = $hash_value;
@@ -105,7 +104,7 @@ class P2c2pRequest extends AbstractHelper{
 		$isFounded  = false;
 		$currency_type = $this->getMerchantSelectedCurrencyCode();
 
-		foreach ($this->objP2c2pCurrencyCodeHelper->getP2c2pSupportedCurrenyCode() as $key => $value) {			
+		foreach ($this->objP2c2pCurrencyCodeHelper->getP2c2pSupportedCurrenyCode() as $key => $value) {
 			if ($value['Num'] === $currency_type) {
 				$exponent = $value['Exponent'];
 				$isFounded = true;
@@ -129,7 +128,7 @@ class P2c2pRequest extends AbstractHelper{
 	//Creating basic form field request this's required by 2C2P Payment getaway.
 	private function generateP2c2pCommonFormFields($parameter) {
 		
-		$merchant_id      	 = $this->objConfigSettings['merchantId'];		
+		$merchant_id      	 = $this->objConfigSettings['merchantId'];
 		$currency       	 = $this->getMerchantSelectedCurrencyCode();
 		$selected_lang       = $this->objConfigSettings['toc2p_lang'];;
 
@@ -172,9 +171,19 @@ class P2c2pRequest extends AbstractHelper{
     }
 
     //Set the 123 payment type expiry date of the currenct time zone.
-    function setPaymentExpiryTime($paymentBody) {
+    function setPaymentExpiryTime() {
 
     	$payment_expiry = $this->objConfigSettings['paymentExpiry'];
+
+    	//Set default 123 payment expiry. If validation is failed from merchant configuration sections.
+    	if(!isset($payment_expiry) || empty($payment_expiry) || !is_numeric($payment_expiry)) {
+            $payment_expiry = 8;
+        }    
+
+        //Set default 123 payment expiry. If validation is failed from merchant configuration sections.
+        if(!($payment_expiry >=8 && $payment_expiry <= 720)) {            
+            $payment_expiry = 8;
+        }
 
     	$date           = date("Y-m-d H:i:s");
     	$strTimezone    = date_default_timezone_get();
@@ -199,6 +208,6 @@ class P2c2pRequest extends AbstractHelper{
     function getMerchantReturnUrl() {
 
     	$baseUrl = $this->objStoreManagerInterface->getStore()->getBaseUrl();
-    	return  $baseUrl.'p2c2p/payment/response';
+    	return  $baseUrl.'P2c2p/payment/response';
     }
 }

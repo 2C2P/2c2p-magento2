@@ -10,7 +10,8 @@ namespace P2c2p\P2c2pPayment\Controller\Payment;
 class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAction
 {
 	public function execute()
-	{		
+	{	
+
 		//If payment getway response is empty then redirect to home page directory.		
 		if(empty($_REQUEST) || empty($_REQUEST['order_id'])){
 			$this->_redirect('');
@@ -54,7 +55,7 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 		//check payment status according to payment response.
 		if(strcasecmp($payment_status_code, "000") == 0) {			
 			//IF payment status code is success
-
+						
 			if(!empty($order->getCustomerId()) && !empty($_REQUEST['stored_card_unique_id'])) {
 				$intCustomerId = $order->getCustomerId();
 				$boolIsFound = false;
@@ -80,7 +81,7 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 				}
 
 				if(!$boolIsFound) {
-					$metaDataHelper->saveUserToken($arrayTokenData);					
+					$metaDataHelper->saveUserToken($arrayTokenData);
 				}
 			}
 
@@ -92,16 +93,22 @@ class Response extends \P2c2p\P2c2pPayment\Controller\AbstractCheckoutRedirectAc
 			$this->executeSuccessAction($_REQUEST);
 			return;
 
-		} else if(strcasecmp($payment_status_code, "001") == 0) {			
-			//Set the Pending payment status when payment is pending. like 123 payment type.
+		} else if(strcasecmp($payment_status_code, "001") == 0) {
+			//Set the Pending payment status when payment is pending. like 123 payment type.			
 			$order->setState("Pending_2C2P");
 			$order->setStatus("Pending_2C2P");
+
 			$order->save();
 
 			$this->executeSuccessAction($_REQUEST);
 			return;
 
-		} else {
+		} else if(strcasecmp($payment_status_code, "002") == 0) {			
+			//002 = Rejected (Failed payment).
+			$this->executeCancelAction();
+			return;
+		}
+		else {		
 			//If payment status code is cancel/Error/other.
 			$this->executeCancelAction();
 			return;

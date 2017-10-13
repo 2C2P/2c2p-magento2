@@ -1,23 +1,23 @@
 <?php
- 
+
  /*
  * Created by 2C2P
  * Date 28 June 2017
  * Create P2c2p require table in database when plugin/module is installed in Magento-2
  */
 
-namespace P2c2p\P2c2pPayment\Setup;
+ namespace P2c2p\P2c2pPayment\Setup;
 
-use Magento\Framework\Setup\InstallSchemaInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\Setup\SchemaSetupInterface;
-use Magento\Framework\DB\Ddl\Table;
+ use Magento\Framework\Setup\InstallSchemaInterface;
+ use Magento\Framework\Setup\ModuleContextInterface;
+ use Magento\Framework\Setup\SchemaSetupInterface;
+ use Magento\Framework\DB\Ddl\Table;
 
-class InstallSchema implements InstallSchemaInterface
-{
-	public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
-	{
-		$installer = $setup;
+ class InstallSchema implements InstallSchemaInterface
+ {
+   public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+   {
+      $installer = $setup;
 
 		/**
          * Prepare database for install
@@ -61,42 +61,42 @@ class InstallSchema implements InstallSchemaInterface
 		*/
         if(!$installer->tableExists('p2c2p/token')) {
 
-    		$table = $installer->getConnection()->newTable(
-                $installer->getTable('p2c2p_token')
+          $table = $installer->getConnection()->newTable(
+            $installer->getTable('p2c2p_token')
             )->addColumn(
-                'p2c2p_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                null,
-                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]            
+            'p2c2p_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]            
             )->addColumn(
-                'user_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                10,
-                ['unsigned' => true, 'nullable' => false]            
+            'user_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            10,
+            ['unsigned' => true, 'nullable' => false]            
             )->addColumn(
-                'stored_card_unique_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]            
+            'stored_card_unique_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]            
             )->addColumn(
-                'masked_pan',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]            
+            'masked_pan',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => true]            
             )->addColumn(
-                'created_time',
-                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
-                null,
-                ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT]            
+            'created_time',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+            null,
+            ['nullable' => true, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT]            
             )->addIndex(
-                $installer->getIdxName('p2c2p_token', ['p2c2p_id']),
-                ['p2c2p_id']
+            $installer->getIdxName('p2c2p_token', ['p2c2p_id']),
+            ['p2c2p_id']
             )->addForeignKey(
-                $installer->getFkName('p2c2p_token', 'user_id', 'customer_entity', 'entity_id'),
-                'user_id',
-                $installer->getTable('customer_entity'),
-                'entity_id',
-                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            $installer->getFkName('p2c2p_token', 'user_id', 'customer_entity', 'entity_id'),
+            'user_id',
+            $installer->getTable('customer_entity'),
+            'entity_id',
+            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
             );
 
             $installer->getConnection()->createTable($table);
@@ -106,184 +106,182 @@ class InstallSchema implements InstallSchemaInterface
 		* Create p2c2p_meta table.
 		*/
         if(!$installer->tableExists('p2c2p/meta')) {
-            
+
             $table = $installer->getConnection()->newTable(
                 $installer->getTable('p2c2p_meta')
-            )->addColumn(
+                )->addColumn(
                 'p2c2p_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true]            
-            )->addColumn(
+                )->addColumn(
                 'order_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 20,
-                ['unsigned' => true, 'nullable' => false]            
-            )->addColumn(
+                ['unsigned' => true, 'nullable' => true]            
+                )->addColumn(
                 'user_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
-                ['nullable' => false]            
-            )->addColumn(
+                ['nullable' => true]            
+                )->addColumn(
                 'version',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 5,
-                ['nullable' => false]            
-            )->addColumn(
+                ['nullable' => true]            
+                )->addColumn(
                 'request_timestamp',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
                 null,
-                ['nullable' => false, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT]
-            )->addColumn(
+                ['nullable' => true, 'default' => \Magento\Framework\DB\Ddl\Table::TIMESTAMP_INIT]
+                )->addColumn(
                 'merchant_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 25,
-                ['nullable' => false]
-            )->addColumn(
+                ['nullable' => true]
+                )->addColumn(
                 'invoice_no',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 50,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'currency',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 3,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'amount',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 20,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'transaction_ref',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 15,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'approval_code',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 6,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'eci',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 2,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'transaction_datetime',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 100,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'payment_channel',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 3,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'payment_status',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 3,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'channel_response_code',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 2,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'channel_response_desc',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'masked_pan',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 16,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'stored_card_unique_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 20,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'backend_invoice',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 12,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'paid_channel',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 30,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'paid_agent',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 30,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'recurring_unique_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 20,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'user_defined_1',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'user_defined_2',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'user_defined_3',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'user_defined_4',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'user_defined_5',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'browser_info',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 50,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'ippPeriod',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 2,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'ippInterestType',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 1,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'ippInterestRate',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 5,
                 ['nullable' => true]
-            )->addColumn(
+                )->addColumn(
                 'ippMerchantAbsorbRate',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 5,
                 ['nullable' => true]
-            )->addIndex(
+                )->addIndex(
                 $installer->getIdxName('p2c2p_meta', ['p2c2p_id']),
                 ['p2c2p_id']
-            );
+                );
 
-            $installer->getConnection()->createTable($table);
+                $installer->getConnection()->createTable($table);
+            }
+
+            $installer->endSetup();
         }
-
-		$installer->endSetup();
-	}
-}
-
-?>
+    }

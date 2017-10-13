@@ -35,7 +35,7 @@ define(
         if(customer.isLoggedIn()){
             $.ajax({
                 type: "POST",
-                url: url.build('p2c2p/token/index'),
+                url: url.build('P2c2p/token/index'),
                 data: {userId : customer.customerData.id },
                 async : false,
                 success: function (response) {                    
@@ -79,7 +79,7 @@ define(
 
                 $.ajax({
                     type: "POST",
-                    url: url.build('p2c2p/token/remove'),
+                    url: url.build('P2c2p/token/remove'),
                     data: {token: tokenId},
                     async : false,
                     success: function (response) {
@@ -146,7 +146,7 @@ define(
             },
 
             afterPlaceOrder: function () {
-                window.location.replace(url.build('p2c2p/payment/request'));
+                window.location.replace(url.build('P2c2p/payment/request'));
             }
         });
     }
