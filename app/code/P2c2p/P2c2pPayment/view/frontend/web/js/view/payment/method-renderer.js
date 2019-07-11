@@ -10,7 +10,7 @@ define(
         'use strict';
         rendererList.push(
             {
-                type: 'P2c2pPayment',
+                type: 'p2c2ppayment',
                 component: 'P2c2p_P2c2pPayment/js/view/payment/method-renderer/P2c2pPayment'
             }
         );

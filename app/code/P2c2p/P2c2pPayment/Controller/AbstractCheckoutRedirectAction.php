@@ -40,7 +40,7 @@ abstract class AbstractCheckoutRedirectAction extends AbstractCheckoutAction
         $this->objP2c2pRequestHelper = $p2c2pRequest;
         $this->objP2c2pMetaHelper = $p2c2pMeta;
         $this->objP2c2pHashHelper = $p2c2pHash;
-        $this->objConfigSettings = $configSettings->getValue('payment/P2c2pPayment');
+        $this->objConfigSettings = $configSettings->getValue('payment/p2c2ppayment');
         $this->objCatalogSession = $catalogSession;        
     }
 
@@ -82,7 +82,7 @@ abstract class AbstractCheckoutRedirectAction extends AbstractCheckoutAction
     //This function is used to redirect to customer message action method after make successfully payment / 123 payment type.
     protected function executeSuccessAction($request){
         if ($this->getCheckoutSession()->getLastRealOrderId()) {
-            $this->_forward('Success','Payment','P2c2p', $request);
+            $this->_forward('Success','Payment','p2c2p', $request);
         }
     }
     
