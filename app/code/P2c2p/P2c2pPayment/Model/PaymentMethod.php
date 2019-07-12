@@ -78,52 +78,88 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     {
         $this->log('in_void');
         $order = $payment->getOrder();
-        $orderid = $order->getId();
-        $orderid = str_pad($orderid, 9, "0", STR_PAD_LEFT);
+        $orderid = $order->getRealOrderId();
         $this->log($orderid);
 
         $amount = $order->getGrandTotal();
 
         $status = $this->inquiry($orderid);
-        if($status == 'A'){
+		
+		if (is_null($status))
+		{
+			$this->log('in_void inquiry object is null / empty.');
+			throw new \Magento\Framework\Validator\Exception(__('Cannot query payment status.'));
+		}
+		
+		$res = null;
+        if($status->status == 'A'){
             $res = $this->c2p_void($orderid);
-        }else {
+        }else if($status->status == 'S'){
             $res = $this->c2p_refund($orderid, $amount);
-        }
-
-        if($res != "00"){
-            return false;
-        } else {
+		}else if($status->status == 'V'){
+			$this->log('in_void: payment was already voided.');
+			return $this;
+        }else{
+			throw new \Magento\Framework\Validator\Exception(__('Payment status ('.$status->status.') is not valid to perform void/refund. Try again later.'));
+		}
+		
+		if (is_null($res))
+		{
+			$this->log('in_void res object is null.');
+			throw new \Magento\Framework\Validator\Exception(__('Cannot perform void payment.'));
+		}
+		
+		$this->log('in_void respCode=' . $res->respCode .', status='.$res->status);
+        if($res->respCode == "00" 
+			|| $res->status == "V") {
            return $this; 
+        } else {
+            throw new \Magento\Framework\Validator\Exception(__('Cannot perform void payment. reason_code:' . $res->respCode));
         }
-        
-        
     }
 
     public function cancel(\Magento\Payment\Model\InfoInterface $payment)
     {
-
         $this->log('in_cancel');
         $order = $payment->getOrder();
-        $orderid = $order->getId();
-        $orderid = str_pad($orderid, 9, "0", STR_PAD_LEFT);
+        $orderid = $order->getRealOrderId();
         $this->log($orderid);
 
 
         $amount = $order->getGrandTotal();
 
         $status = $this->inquiry($orderid);
-        if($status == 'A'){
+		
+		if (is_null($status))
+		{
+			$this->log('in_void inquiry object is null / empty.');
+			throw new \Magento\Framework\Validator\Exception(__('Cannot query payment status.'));
+		}
+		
+		$res = null;
+        if($status->status == 'A'){
             $res = $this->c2p_void($orderid);
-
-        }else {
+        }else if($status->status == 'S'){
             $res = $this->c2p_refund($orderid, $amount);
-        }
-        
-        if($res != "00"){
-            return false;
-        } else {
+		}else if($status->status == 'V'){
+			$this->log('in_void: payment was already voided.');
+			return $this;
+        }else{
+			throw new \Magento\Framework\Validator\Exception(__('Payment status ('.$status->status.') is not valid to perform void/refund. Try again later.'));
+		}
+		
+		if (is_null($res))
+		{
+			$this->log('in_void res object is null.');
+			throw new \Magento\Framework\Validator\Exception(__('Cannot perform cancel payment.'));
+		}
+		
+		$this->log('in_void respCode=' . $res->respCode .', status='.$res->status);
+        if($res->respCode == "00" 
+			|| $res->status == "V") {
            return $this; 
+        } else {
+            throw new \Magento\Framework\Validator\Exception(__('Cannot perform cancel payment. reason_code:' . $res->respCode));
         }
     }
 
@@ -132,22 +168,30 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 
         $this->log('in_capture');
         $order = $payment->getOrder();
-        $orderid = $order->getId();
-        $orderid = str_pad($orderid, 9, "0", STR_PAD_LEFT);
+        $orderid = $order->getRealOrderId();
         $amount = $order->getGrandTotal();
 
         $this->log($amount);
 
         $res = $this->c2p_capture($orderid, $amount);
 
-        if($res != "00"){
-            return false;
-        } else {
+		if (is_null($res))
+		{
+			throw new \Magento\Framework\Validator\Exception(__('Cannot perform capture.'));
+		}
+		
+        if($res->respCode == "00" 
+			|| $res->status == "S"
+			|| $res->status == "SS"
+			|| $res->status == "RS")
+		{
             $order = $payment->getOrder();
             $billing = $order->getBillingAddress();
             $payment->setTransactionId($orderid)->setIsTransactionClosed(true);
             return $this;
-        }
+        }else{
+			throw new \Magento\Framework\Validator\Exception(__('Payment capture error. reason_code:' . $res->respCode));
+		}
 
 
         
@@ -187,27 +231,38 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 
         $this->log('in_refund');
         $order = $payment->getOrder();
-        $orderid = $order->getId();
-
-         $order = $payment->getOrder();
-        $orderid = $order->getId();
-        $orderid = str_pad($orderid, 9, "0", STR_PAD_LEFT);
+        $orderid = $order->getRealOrderId();
         $this->log($orderid);
 
 
         $amount = $order->getGrandTotal();
-
         $status = $this->inquiry($orderid);
-        if($status == 'A'){
+		
+		if (is_null($status))
+		{
+			$this->log('in_void inquiry object is null / empty.');
+			throw new \Magento\Framework\Validator\Exception(__('Cannot query payment status.'));
+		}
+		
+		$res = null;
+        if($status->status == 'A'){
             $res = $this->c2p_void($orderid);
-
-        }else {
+        }else if($status->status == 'S'){
             $res = $this->c2p_refund($orderid, $amount);
-        }
+		}else if($status->status == 'V'){
+			$this->log('in_void: payment was already voided.');
+			return $this;
+        }else{
+			throw new \Magento\Framework\Validator\Exception(__('Payment status ('.$status->status.') is not valid to perform void/refund. Try again later.'));
+		}
+		
+		if (is_null($res))
+		{
+			throw new \Magento\Framework\Validator\Exception(__('Cannot perform refund.'));
+		}
         
-        if($res != "00"){
-            return false;
-        } else {
+        if($res->respCode == "00" 
+			|| $res->status == "V") {
             $transactionId = $payment->getParentTransactionId();
             $payment
             ->setTransactionId($transactionId . '-' . \Magento\Sales\Model\Order\Payment\Transaction::TYPE_REFUND)
@@ -215,6 +270,9 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
             ->setIsTransactionClosed(1)
             ->setShouldCloseParentTransaction(1);
            return $this; 
+        }else
+		{
+            throw new \Magento\Framework\Validator\Exception(__('Cannot perform refund. reason_code:' . $res->respCode));
         }
 
         /*
@@ -282,14 +340,17 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $res_userDefined5 = $resXml->userDefined5;    
         
         $res_stringToHash = $res_version.$res_respCode.$res_processType.$res_invoiceNo.$res_amount.$res_status.$res_approvalCode.$res_referenceNo.$res_transactionDateTime.$res_paidAgent.$res_paidChannel.$res_maskedPan.$res_eci.$res_paymentScheme.$res_processBy.$res_refundReferenceNo.$res_userDefined1.$res_userDefined2.$res_userDefined3.$res_userDefined4.$res_userDefined5 ;
-
-        $res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
+        $this->log('res_stringToHash : ' . $res_stringToHash);
+		
+		$res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
+		$this->log('Generated Hash : ' . $res_responseHash);
+		
 
         if($resXml->hashValue == strtolower($res_responseHash)){
-            //echo "valid response";
-            return $res_status;
+            $this->log('signature : OK, res_status=' . $res_status);
+            return $resXml;
         }else{
-            //echo "invalid response";
+			$this->log('signature : Mismatched. RESPONSE='.$resXml->hashValue .', SYSTEM='.$res_responseHash);
             return null;
         }
     }
@@ -326,13 +387,19 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $res_userDefined5 = $resXml->userDefined5;    
         
         $res_stringToHash = $res_version.$res_respCode.$res_processType.$res_invoiceNo.$res_amount.$res_status.$res_approvalCode.$res_referenceNo.$res_transactionDateTime.$res_paidAgent.$res_paidChannel.$res_maskedPan.$res_eci.$res_paymentScheme.$res_processBy.$res_refundReferenceNo.$res_userDefined1.$res_userDefined2.$res_userDefined3.$res_userDefined4.$res_userDefined5 ;
-        $res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
-
-        if($resXml->hashValue == strtolower($res_responseHash)){
-            return $res_respCode;
-        }
-
-        return false;
+        $this->log('res_stringToHash : ' . $res_stringToHash);
+		
+		$res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
+		$this->log('Generated Hash : ' . $res_responseHash);
+		
+		
+        if(strtolower($resXml->hashValue) == strtolower($res_responseHash)){
+			$this->log('signature : OK, res_respCode=' . $res_respCode);
+            return $resXml;
+        }else{
+			$this->log('signature : Mismatched. RESPONSE='.$resXml->hashValue .', SYSTEM='.$res_responseHash);
+			return null;
+		}
 
     }
 
@@ -366,14 +433,22 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $res_userDefined4 = $resXml->userDefined4;
         $res_userDefined5 = $resXml->userDefined5;    
         
+		
+		
         $res_stringToHash = $res_version.$res_respCode.$res_processType.$res_invoiceNo.$res_amount.$res_status.$res_approvalCode.$res_referenceNo.$res_transactionDateTime.$res_paidAgent.$res_paidChannel.$res_maskedPan.$res_eci.$res_paymentScheme.$res_processBy.$res_refundReferenceNo.$res_userDefined1.$res_userDefined2.$res_userDefined3.$res_userDefined4.$res_userDefined5 ;
-        $res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
-
-        if($resXml->hashValue == strtolower($res_responseHash)){
-            return $res_respCode;
-        }
-
-        return false;
+        $this->log('res_stringToHash : ' . $res_stringToHash);
+		
+		$res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
+		$this->log('Generated Hash : ' . $res_responseHash);
+		
+		
+        if(strtolower($resXml->hashValue) == strtolower($res_responseHash)){
+			$this->log('signature : OK, res_respCode=' . $res_respCode);
+            return $resXml;
+        }else{
+			$this->log('signature : Mismatched. RESPONSE='.$resXml->hashValue .', SYSTEM='.$res_responseHash);
+			return null;
+		}
 
     }
 
@@ -406,14 +481,22 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
         $res_userDefined4 = $resXml->userDefined4;
         $res_userDefined5 = $resXml->userDefined5;    
         
+		
+		
         $res_stringToHash = $res_version.$res_respCode.$res_processType.$res_invoiceNo.$res_amount.$res_status.$res_approvalCode.$res_referenceNo.$res_transactionDateTime.$res_paidAgent.$res_paidChannel.$res_maskedPan.$res_eci.$res_paymentScheme.$res_processBy.$res_refundReferenceNo.$res_userDefined1.$res_userDefined2.$res_userDefined3.$res_userDefined4.$res_userDefined5 ;
-        $res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
-
-        if($resXml->hashValue == strtolower($res_responseHash)){
-            return $res_respCode;
-        }
-
-        return false;
+        $this->log('res_stringToHash : ' . $res_stringToHash);
+		
+		$res_responseHash = strtoupper(hash_hmac('sha1',$res_stringToHash,$this->secretKey, false)); 
+		$this->log('Generated Hash : ' . $res_responseHash);
+		
+		
+        if(strtolower($resXml->hashValue) == strtolower($res_responseHash)){
+			$this->log('signature : OK, res_respCode=' . $res_respCode);
+            return $resXml;
+        }else{
+			$this->log('signature : Mismatched. RESPONSE='.$resXml->hashValue .', SYSTEM='.$res_responseHash);
+			return null;
+		}
     }
 
 
@@ -464,10 +547,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 <hashValue>{$this->hash}</hashValue>
                 </PaymentProcessRequest>";  
 
-        $payload = base64_encode($xml); //Encrypt payload
+        $this->log('request data : ' . $xml);
+        $payload = base64_encode($xml);//Encrypt payload
 
         $http = new \P2c2p\P2c2pPayment\Helper\HTTP();
         $response = $http->post($this->getPaymentGetwayRedirectUrl(),"paymentRequest=".$payload);
+		$this->log('response data : ' . base64_decode($response));
 
         return $response;
     }
@@ -487,6 +572,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     public function cap_paymentProcess($invoiceNo,$amount){
+        
 
         $this->loadsettings();
 
@@ -502,12 +588,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 <actionAmount>{$amount}</actionAmount>
                 <hashValue>{$this->hash}</hashValue>
                 </PaymentProcessRequest>";  
-
+		$this->log('request data : ' . $xml);
         $payload = base64_encode($xml);//Encrypt payload
 
         $http = new \P2c2p\P2c2pPayment\Helper\HTTP();
         $response = $http->post($this->getPaymentGetwayRedirectUrl(),"paymentRequest=".$payload);
-
+		$this->log('response data : ' . base64_decode($response));
         return $response;
     }
 
@@ -541,10 +627,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 <hashValue>{$this->hash}</hashValue>
                 </PaymentProcessRequest>";  
 
+        $this->log('request data : ' . $xml);
         $payload = base64_encode($xml);//Encrypt payload
 
         $http = new \P2c2p\P2c2pPayment\Helper\HTTP();
         $response = $http->post($this->getPaymentGetwayRedirectUrl(),"paymentRequest=".$payload);
+		$this->log('response data : ' . base64_decode($response));
 
         return $response;
     }
@@ -577,10 +665,12 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
                 <hashValue>{$this->hash}</hashValue>
                 </PaymentProcessRequest>";  
 
-        $payload = base64_encode($xml); //Encrypt payload
+        $this->log('request data : ' . $xml);
+        $payload = base64_encode($xml);//Encrypt payload
 
         $http = new \P2c2p\P2c2pPayment\Helper\HTTP();
         $response = $http->post($this->getPaymentGetwayRedirectUrl(),"paymentRequest=".$payload);
+		$this->log('response data : ' . base64_decode($response));
 
         return $response;
     }
