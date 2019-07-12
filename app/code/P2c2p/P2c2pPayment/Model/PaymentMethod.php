@@ -181,6 +181,7 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 		}
 		
         if($res->respCode == "00" 
+			|| $res->respCode == "32"  // Settlement/Capture not required
 			|| $res->status == "S"
 			|| $res->status == "SS"
 			|| $res->status == "RS")
@@ -674,8 +675,4 @@ class PaymentMethod extends \Magento\Payment\Model\Method\AbstractMethod
 
         return $response;
     }
-
-
-
-
 }
