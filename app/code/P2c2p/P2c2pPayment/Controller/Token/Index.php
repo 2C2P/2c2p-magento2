@@ -16,7 +16,7 @@ class Index extends \Magento\Framework\App\Action\Action
         
         parent::__construct($context);             
         $this->objTokenFactory    = $objTokenFactory;
-        $this->objConfigSettings  = $configSettings->getValue('payment/P2c2pPayment');
+        $this->objConfigSettings  = $configSettings->getValue('payment/p2c2ppayment');
     }
 
     public function execute() {
